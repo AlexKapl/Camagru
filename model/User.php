@@ -12,8 +12,8 @@ class User
 	public function __construct($login, $db) {
 		$this->_login = $login;
 		$this->_db = $db;
-		$this->_db_save = $db->prepare("INSERT INTO `user` (`login`, `email`, `password`)
-										VALUES(?, ?, ?)");
+		$this->_db_save = $db->prepare("INSERT INTO `user` (`login`, `email`, `password`, `link`)
+										VALUES(?, ?, ?, ?)");
 		$this->_db_login = $db->prepare("SELECT * FROM `user` WHERE `login` = ?");
 		$this->_db_email = $db->prepare("SELECT * FROM `user` WHERE `email` = ?");
 	}
@@ -36,8 +36,7 @@ class User
 		if ($this->_get_user_data($this->_db_email,
 			isset($this->_email) ? [$this->_email] : [$this->_login])) {
 			return ($this->_db_email->fetch());
-		}
-		else
+		} else
 			return (FALSE);
 	}
 
@@ -45,9 +44,34 @@ class User
 		if (password_verify($password, $user['password'])) {
 			$this->_email = $user['email'];
 			return (TRUE);
-		}
-		else
+		} else
 			return ('<div class="error">Wrong password!</div><hr/>');
+	}
+
+	private function _send_mail($link) {
+		$mail_to = $this->_email;
+		$from_name = 'Alexandr Kaplyar';
+		$from_mail = 'akaplyar@student.unit.ua';
+		$mail_subject = 'Camagru registration';
+		$mail_message = "Hi $this->_login!\r\n Looks like you registered on my Camagru project\r\n";
+		$mail_message .= "Please, confirm your registration by clicking the link below\r\n";
+		$mail_message .= ROOT . "/activate/" . $link ."\r\n";
+		$encoding = "utf-8";
+
+		$subject_preferences = array(
+			"input-charset" => $encoding,
+			"output-charset" => $encoding,
+			"line-length" => 76,
+			"line-break-chars" => "\r\n"
+		);
+		$header = "Content-type: text/html; charset=" . $encoding . " \r\n";
+		$header .= "From: " . $from_name . " <" . $from_mail . "> \r\n";
+		$header .= "MIME-Version: 1.0 \r\n";
+		$header .= "Content-Transfer-Encoding: 8bit \r\n";
+		$header .= "Date: " . date("r (T)") . " \r\n";
+		$header .= iconv_mime_encode("Subject", $mail_subject, $subject_preferences);
+
+		mail($mail_to, $mail_subject, $mail_message, $header);
 	}
 
 	public function check_user_signing_up($email, $password) {
@@ -60,7 +84,9 @@ class User
 			return ('<div class="error">This email is already used!</div><hr/>');
 		else {
 			$password = password_hash($password, PASSWORD_DEFAULT);
-			$this->_get_user_data($this->_db_save, [$this->_login, $email, $password]);
+			$link = hash('whirlpool', $this->_email . time());
+			$this->_get_user_data($this->_db_save, [$this->_login, $email, $password, $link]);
+			$this->_send_mail($link);
 			return (TRUE);
 		}
 	}

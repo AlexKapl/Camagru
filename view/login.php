@@ -24,12 +24,12 @@
 <form class="form" action="login" method="POST">
 	<?=$error?>
 	<p>
-		<input type="text" name="login" required pattern="[\w\d]{6,}" placeholder="Login(min 6)"
-			   value="<?= @$_POST['login'] ?>">
+		<input type="text" name="login" required pattern="[\w\d]{6,}" placeholder="Login(min 6)">
+<!--			   value="--><?//= @$_POST['login'] ?><!--">-->
 	</p>
 	<p>
-		<input type="password" name="password" required pattern="[\w\d]{6,}" placeholder="Password(min 6)"
-			   value="<?= @$_POST['password'] ?>">
+		<input type="password" name="password" required pattern="[\w\d]{6,}" placeholder="Password(min 6)">
+<!--			   value="--><?//= @$_POST['password'] ?><!--">-->
 	</p>
 	<p>
 		<button name="do_login">
