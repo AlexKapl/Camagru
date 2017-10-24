@@ -1,5 +1,5 @@
 <?php
-include('database.php');
+require('database.php');
 
 session_start();
 try {
@@ -21,4 +21,5 @@ try {
 	);
 } catch (PDOException $e) {
 	echo "Can't create table: " . $e->getMessage() . "\n";
+	exit (1);
 }

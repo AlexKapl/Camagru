@@ -1,0 +1,30 @@
+body {
+	height: 100%;
+	background-size: cover;
+	background: url("../images/background.jpeg") no-repeat center fixed #B27B3B;
+}
+
+ul.menu {
+	list-style-type: none;
+}
+
+ul.menu li {
+	display: inline;
+}
+
+.container {
+	background: rgba(00, 00, 00, 0.45);
+	border-radius: 5px;
+	padding: 15px;
+	margin: auto;
+}
+
+.menu {
+	height: 100%;
+}
+
+div.content {
+	height: 100px;
+	padding: 15px;
+	margin: auto;
+}
