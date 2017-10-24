@@ -22,6 +22,7 @@
 </head>
 <body>
 <form class="form" action="login" method="POST">
+	<?=$error?>
 	<p>
 		<input type="text" name="login" required pattern="[\w\d]{6,}" placeholder="Login(min 6)"
 			   value="<?= @$_POST['login'] ?>">

@@ -22,7 +22,7 @@
 				   value="">
 		</p>
 		<p>
-			<button type="submit" name="register">
+			<button type="submit" name="sign_up">
 				Register
 			</button>
 		</p>

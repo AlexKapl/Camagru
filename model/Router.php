@@ -3,10 +3,8 @@
 class Router
 {
 	private $_routes;
-	private $_db;
 
-	public function __construct($db) {
-		$this->_db = $db;
+	public function __construct() {
 		$this->_routes = include(ROOT . '/config/routes.php');
 	}
 
@@ -28,14 +26,12 @@ class Router
 
 	public function route() {
 		$uri = $this->_getURI();
-		$uri = 'login';
 		foreach ($this->_routes as $uri_route => $path) {
 			if (preg_match("~$uri_route~", $uri)) {
-				include (ROOT . "/controller/" . $path . ".php");
-				return ;
+				return (ROOT . "/controller/" . $path . ".php");
 			}
 		}
-		echo "OMFG\n";
+		return NULL;
 	}
 
 	public function __destruct() {

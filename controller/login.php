@@ -1,17 +1,17 @@
 <?php
-require_once(ROOT . '/config/setup.php');
-
-if (isset($_SESSION['user']))
-	header("Location: Lobby.php");
-require(ROOT . '/view/login.php');
+if (isset($_SESSION['login']))
+	header('Location: camagru');
+//$_POST['login'] = 'login';
+//$_POST['do_login'] = 'yeap';
+$error = NULL;
 if (isset($_POST['do_login'])) {
+	require_once(ROOT . '/model/User.php');
 	$user = new User($_POST['login'], $db);
-	if ($user->check_user_exist()) {
-		if ($user->check_user_password()) {
+	$valid = $user->check_user_exist($_POST['password']);
+	if ($valid === TRUE) {
 			$_SESSION['login'] = $_POST['login'];
-			header('Location: Lobby.php');
-		} else
-			echo '<div style="color: red" ">Wrong password!</div><hr/>';
+			header('Location: camagru');
 	} else
-		echo '<div style="color: red" ">Login not found!</div><hr/>';
+		$error = $valid;
 }
+require(ROOT . '/view/login.php');

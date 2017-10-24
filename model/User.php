@@ -2,18 +2,14 @@
 
 class User
 {
-	private $_db;
 	private $_login;
 	private $_email;
-	private $_password;
+	private $_db;
 	private $_db_login;
 	private $_db_email;
 
 	public function __construct($login, $db) {
-//		if (isset($login))
-			$this->_login = $login;
-//		else
-//			$this->_login = $_SESSION['login'];
+		$this->_login = $login;
 		$this->_db = $db;
 		$this->_db_login = $db->prepare("SELECT * FROM `user` WHERE `login` = ?");
 		$this->_db_email = $db->prepare("SELECT * FROM `user` WHERE `email` = ?");
@@ -27,31 +23,39 @@ class User
 	}
 
 	public function check_user_login() {
-		if ($this->_get_user_data($this->_db_login, [$this->_login]))
-			return (TRUE);
-		else
+		if ($this->_get_user_data($this->_db_login, [$this->_login])) {
+			return ($this->_db_login->fetch());
+		} else
 			return (FALSE);
 	}
 
 	public function check_user_email() {
 		if ($this->_get_user_data($this->_db_email,
-			isset($this->_email) ? [$this->_email] : [$this->_login]))
-			return (TRUE);
+			isset($this->_email) ? [$this->_email] : [$this->_login])) {
+			return ($this->_db_email->fetch());
+		}
 		else
 			return (FALSE);
 	}
 
-	public function check_user_password() {
-		return (TRUE);
+	private function _check_user_password($user, $password) {
+		if (password_verify($password, $user['password']))
+			return (TRUE);
+		else
+			return ('<div class="error">Wrong password!</div><hr/>');
 	}
 
-	public function check_user_exist() {
-		if ($this->check_user_login() !== FALSE) {
-			return (TRUE);
-		} else if ($this->check_user_email(NULL) !== FALSE) {
-			return (TRUE);
+	public function check_user_exist($password) {
+		if (($user = $this->check_user_login()) !== FALSE) {
+			return ($this->_check_user_password($user, $password));
+		} else if (($user = $this->check_user_email()) !== FALSE) {
+			return ($this->_check_user_password($user, $password));
 		} else
-			return (FALSE);
+			return ('<div class="error">Login not found!</div><hr/>');
+	}
+
+	public function setEmail($email) {
+		$this->_email = $email;
 	}
 
 	public function __destruct() {
