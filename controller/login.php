@@ -4,7 +4,11 @@ if (isset($_SESSION['login']))
 //$_POST['login'] = 'login';
 //$_POST['do_login'] = 'yeap';
 $error = NULL;
-if (isset($_POST['do_login'])) {
+if (isset($_SESSION['registered'])) {
+	$error = '<div class="goodboy">You are successfully signed up!</div><hr/>';
+//	unset($_SESSION['registered']);
+}
+if (isset($_POST['do_login'])) { //add mail confirmation
 	require_once(ROOT . '/model/User.php');
 	$user = new User($_POST['login'], $db);
 	$valid = $user->check_user_exist($_POST['password']);

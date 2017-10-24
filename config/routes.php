@@ -2,5 +2,6 @@
 
 return array(
 	'login' => 'login',
-	'signup'=>'signup'
+	'signup'=>'signup',
+	'camagru'=>'camagru'
 );
