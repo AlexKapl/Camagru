@@ -25,13 +25,17 @@ class User
 			return ('<div class="error">This login is already used!</div><hr/>');
 		else if (filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE)
 			return ('<div class="error">Invalid email!</div><hr/>');
-		else if ($this->_check_user_email())
+		else if ($this->_check_user_email() !== FALSE)
 			return ('<div class="error">This email is already used!</div><hr/>');
 		else {
 			$password = password_hash($password, PASSWORD_DEFAULT);
 			$link = hash('whirlpool', $this->_email . time());
 			$this->_execute_query($this->_db_save, [$this->_login, $email, $password, $link]);
-			$this->_send_mail($link);
+			$mail_message = "Hi $this->_login!<br/>Looks like you registered on my Camagru project<br/>";
+			$mail_message .= "Please, confirm your registration by clicking the link below<br/>";
+			$mail_message .= "http://localhost:8080" . "/activate/" . $link . "\r\n";
+			$mail_subject = 'Camagru registration';
+			$this->_send_mail($mail_message, $mail_subject);
 			return (TRUE);
 		}
 	}
@@ -51,7 +55,7 @@ class User
 			$user = $user_link->fetch();
 			if ($user !== FALSE) {
 				if ($user['status'] === '0') {
-					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1' WHERE `id` = ?");
+					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = '\0' WHERE `id` = ?");
 					if ($this->_execute_query($update, [$user['id']])) {
 						return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
 					}
@@ -64,14 +68,51 @@ class User
 		return ('<div class="error">Wrong activation link!</div><hr/>');
 	}
 
-	private function _send_mail($link) {
+	public function user_check_link($link) {
+		$user_link = $this->_db->prepare("SELECT * FROM `user` WHERE `link` = ?");
+		if ($this->_execute_query($user_link, [$link])) {
+			return (TRUE);
+		} else
+			return ('<div class="error">Wrong recovery link!<br/>Nice try, little hacker ;)</div><hr/>');
+	}
+
+	public function user_password_recovery($link) {
+		if ($user !== FALSE) {
+			if ($user['status'] === '0') {
+				$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = '\0' WHERE `id` = ?");
+				if ($this->_execute_query($update, [$user['id']])) {
+					return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
+				}
+			} else {
+				return ('<div class="error">
+					You have already confirmed your registration, no need to repeat it!</div><hr/>');
+			}
+		}
+	}
+
+	public function user_password_forgot($email) {
+		$this->_email = $email;
+		if (($user = $this->_check_user_email()) !== FALSE) {
+			$link = hash('whirlpool', $this->_email . time());
+			$update = $this->_db->prepare("UPDATE `user` SET `link` = ? WHERE `id` = ?");
+			if ($this->_execute_query($update, [$user['link'], $user['id']])) {
+				$mail_message = "Hi $this->_login!<br/>Someone requested password recovery on my Camagru project.<br/>";
+				$mail_message .= "If it was not you, just ignore this message.<br/>";
+				$mail_message .= "Otherwise to continue clock the link below.<br/>";
+				$mail_message .= "http://localhost:8080" . "/forgot/" . $link . "\r\n";
+				$mail_subject = 'Camagru password recovery';
+				$this->_send_mail($mail_message, $mail_subject);
+				return ('<div class="error">Recovery message has been sent to your email.<br/>
+							If it did\'t come, try again</div><hr/>');
+			}
+		}
+		return ('<div class="error">Email not found!</div><hr/>');
+	}
+
+	private function _send_mail($mail_message, $mail_subject) {
 		$mail_to = $this->_email;
 		$from_name = 'Alexandr Kaplyar';
 		$from_mail = 'akaplyar@student.unit.ua';
-		$mail_subject = 'Camagru registration';
-		$mail_message = "Hi $this->_login!<br/>Looks like you registered on my Camagru project<br/>";
-		$mail_message .= "Please, confirm your registration by clicking the link below<br/>";
-		$mail_message .= "http://localhost:8080" . "/activate/" . $link . "\r\n";
 		$encoding = "utf-8";
 
 		$subject_preferences = array(

@@ -19,12 +19,13 @@
 					user
 				</li>
 				<li>
-					logout
+					<a href="http://localhost:8080/logout">logout</a>
 				</li>
 			</ul>
 		</div>
 	</div>
 </header>
+<?= $_SESSION['Message'] ?>
 <div class="content">
 	Lorem ipsum dolor amend
 </div>

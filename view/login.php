@@ -39,6 +39,11 @@
 			Register
 		</button>
 	</p>
+	<p>
+		<button class="signup" onclick='location.href="forgot"'>
+			Forgot password?
+		</button>
+	</p>
 </form>
 </body>
 </html>
