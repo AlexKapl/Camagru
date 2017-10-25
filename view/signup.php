@@ -9,7 +9,7 @@
 <body>
 <div class="login lfield">
 	<form class="form" action="signup" method="POST">
-		<?=$error?>
+		<?= $_SESSION['Message'] ?>
 		<p>
 			<input type="email" name="email" required placeholder="Email"
 				   value="">

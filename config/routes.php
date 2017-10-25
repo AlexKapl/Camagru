@@ -3,5 +3,6 @@
 return array(
 	'login' => 'login',
 	'signup'=>'signup',
-	'camagru'=>'camagru'
+	'camagru'=>'camagru',
+	'activate/(\w+)'=>'activation/$1'
 );

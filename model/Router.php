@@ -28,7 +28,11 @@ class Router
 		$uri = $this->_getURI();
 		foreach ($this->_routes as $uri_route => $path) {
 			if (preg_match("~$uri_route~", $uri)) {
-				return (ROOT . "/controller/" . $path . ".php");
+				$res = explode('/', preg_replace("~$uri_route~", $path, $uri));
+				$res[0] = ROOT . "/controller/" . $res[0] . ".php";
+				return ($res);
+//				return (['controller' => ROOT . "/controller/" . $res[0] . ".php",
+//				return (ROOT . "/controller/" . $path . ".php");
 			}
 		}
 		return NULL;

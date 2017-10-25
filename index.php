@@ -8,8 +8,11 @@ require_once(ROOT . '/model/Router.php');
 require_once ROOT . '/config/setup.php';
 
 $router = new Router();
-$controller = $router->route();
-if ($controller) {
+$res = $router->route();
+$controller = $res[0];
+if (isset($res[1]))
+	$args = $res[1];
+if (file_exists($controller)) {
 	require_once ($controller);
 } else
-	header('Location: 404');
+	require_once ('404.html');
