@@ -8,6 +8,7 @@ class User
 	private $_db_save;
 	private $_db_login;
 	private $_db_email;
+	private $_db_link;
 
 	public function __construct($login, $db) {
 		if (isset($login))
@@ -17,6 +18,7 @@ class User
 										VALUES(?, ?, ?, ?)");
 		$this->_db_login = $db->prepare("SELECT * FROM `user` WHERE `login` = ?");
 		$this->_db_email = $db->prepare("SELECT * FROM `user` WHERE `email` = ?");
+		$this->_db_link = $db->prepare("SELECT * FROM `user` WHERE `link` = ?");
 	}
 
 	public function check_user_signing_up($email, $password) {
@@ -50,18 +52,14 @@ class User
 	}
 
 	public function check_user_activation($link) {
-		$user_link = $this->_db->prepare("SELECT * FROM `user` WHERE `link` = ?");
-		if ($this->_execute_query($user_link, [$link])) {
-			$user = $user_link->fetch();
+		if ($this->_execute_query($this->_db_link, [$link])) {
+			$user = $this->_db_link->fetch();
 			if ($user !== FALSE) {
 				if ($user['status'] === '0') {
 					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = '\0' WHERE `id` = ?");
 					if ($this->_execute_query($update, [$user['id']])) {
 						return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
 					}
-				} else {
-					return ('<div class="error">
-					You have already confirmed your registration, no need to repeat it!</div><hr/>');
 				}
 			}
 		}
@@ -69,25 +67,31 @@ class User
 	}
 
 	public function user_check_link($link) {
-		$user_link = $this->_db->prepare("SELECT * FROM `user` WHERE `link` = ?");
-		if ($this->_execute_query($user_link, [$link])) {
-			return (TRUE);
-		} else
-			return ('<div class="error">Wrong recovery link!<br/>Nice try, little hacker ;)</div><hr/>');
-	}
-
-	public function user_password_recovery($link) {
-		if ($user !== FALSE) {
-			if ($user['status'] === '0') {
-				$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = '\0' WHERE `id` = ?");
-				if ($this->_execute_query($update, [$user['id']])) {
-					return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
+		if (isset($link)) {
+			if ($this->_execute_query($this->_db_link, [$link])) {
+				if (($user = $this->_db_link->fetch()) !== FALSE) {
+					return ($user);
 				}
-			} else {
-				return ('<div class="error">
-					You have already confirmed your registration, no need to repeat it!</div><hr/>');
 			}
 		}
+		return (FALSE);
+	}
+
+	public function user_password_recovery($password, $password2, $link) {
+		if (($user = $this->user_check_link($link)) !== FALSE) {
+			if (strcmp($password, $password2) === 0) {
+				$update = $this->_db->prepare("UPDATE `user` SET `password` = ?, `link` = '\0' WHERE `id` = ?");
+				$password = password_hash($password, PASSWORD_DEFAULT);
+				if ($this->_execute_query($update, [$password, $user['id']])) {
+					return (TRUE);
+				} else {
+					return ('<div class="error">Something goes wrong, try again</div><hr/>');
+				}
+			} else {
+				return ('<div class="error">Passwords didn\'t match!</div><hr/>');
+			}
+		}
+		return (FALSE);
 	}
 
 	public function user_password_forgot($email) {
@@ -95,11 +99,11 @@ class User
 		if (($user = $this->_check_user_email()) !== FALSE) {
 			$link = hash('whirlpool', $this->_email . time());
 			$update = $this->_db->prepare("UPDATE `user` SET `link` = ? WHERE `id` = ?");
-			if ($this->_execute_query($update, [$user['link'], $user['id']])) {
+			if ($this->_execute_query($update, [$link, $user['id']])) {
 				$mail_message = "Hi $this->_login!<br/>Someone requested password recovery on my Camagru project.<br/>";
 				$mail_message .= "If it was not you, just ignore this message.<br/>";
 				$mail_message .= "Otherwise to continue clock the link below.<br/>";
-				$mail_message .= "http://localhost:8080" . "/forgot/" . $link . "\r\n";
+				$mail_message .= "http://localhost:8080/recovery/" . $link . "\r\n";
 				$mail_subject = 'Camagru password recovery';
 				$this->_send_mail($mail_message, $mail_subject);
 				return ('<div class="error">Recovery message has been sent to your email.<br/>
