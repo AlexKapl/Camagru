@@ -56,7 +56,7 @@ class User
 			$user = $this->_db_link->fetch();
 			if ($user !== FALSE) {
 				if ($user['status'] === '0') {
-					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = '\0' WHERE `id` = ?");
+					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = NULL WHERE `id` = ?");
 					if ($this->_execute_query($update, [$user['id']])) {
 						return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
 					}
@@ -80,7 +80,7 @@ class User
 	public function user_password_recovery($password, $password2, $link) {
 		if (($user = $this->user_check_link($link)) !== FALSE) {
 			if (strcmp($password, $password2) === 0) {
-				$update = $this->_db->prepare("UPDATE `user` SET `password` = ?, `link` = '\0' WHERE `id` = ?");
+				$update = $this->_db->prepare("UPDATE `user` SET `password` = ?, `link` = NULL WHERE `id` = ?");
 				$password = password_hash($password, PASSWORD_DEFAULT);
 				if ($this->_execute_query($update, [$password, $user['id']])) {
 					return (TRUE);

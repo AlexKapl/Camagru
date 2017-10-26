@@ -11,10 +11,10 @@
 	<form class="form" action="<?='http://localhost:8080/recovery/' . $args?>" method="POST">
 		<?= $_SESSION['Message'] ?>
 		<p>
-			<input type="password" name="password" required pattern="[\w\d]{6,}" placeholder="Password(min 6)">
+			<input type="password" name="password" required pattern="<?=pattern?>" placeholder="Password(min 6)">
 		</p>
 		<p>
-			<input type="password" name="password2" required pattern="[\w\d]{6,}" placeholder="Re-renter Password">
+			<input type="password" name="password2" required pattern="<?=pattern?>" placeholder="Re-renter Password">
 		</p>
 		<p>
 			<button type="submit" name="recovery_hide">

@@ -15,12 +15,10 @@
 				   value="">
 		</p>
 		<p>
-			<input type="text" name="login" required pattern="[\w\d]{6,}" placeholder="Login(min 6)"
-				   value="">
+			<input type="text" name="login" required pattern="[\w\d]{6,}" placeholder="Login(min 6)">
 		</p>
 		<p>
-			<input type="password" name="password" required pattern="[\w\d]{6,}" placeholder="password(min 6)"
-				   value="">
+			<input type="password" name="password" required pattern="<?=pattern?>" placeholder="password(min 6)">
 		</p>
 		<p>
 			<button type="submit" name="sign_up">

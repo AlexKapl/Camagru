@@ -17,8 +17,8 @@ try {
 		`login` VARCHAR(30) NOT NULL,
 		`password` VARCHAR(255) NOT NULL,
 		`email` VARCHAR(255) NOT NULL,
-		`link` VARCHAR(300) NOT NULL UNIQUE,
-		`status` ENUM('0', '1') DEFAULT '0',
+		`link` VARCHAR(300) UNIQUE,
+		`status` ENUM('0', '1') DEFAULT '0' NOT NULL,
 		PRIMARY KEY (`id`))"
 	);
 } catch (PDOException $e) {

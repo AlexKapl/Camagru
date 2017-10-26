@@ -31,8 +31,6 @@ class Router
 				$res = explode('/', preg_replace("~$uri_route~", $path, $uri));
 				$res[0] = ROOT . "/controller/" . $res[0] . ".php";
 				return ($res);
-//				return (['controller' => ROOT . "/controller/" . $res[0] . ".php",
-//				return (ROOT . "/controller/" . $path . ".php");
 			}
 		}
 		return NULL;
