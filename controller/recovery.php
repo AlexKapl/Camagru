@@ -13,10 +13,10 @@ if (isset($_POST['recovery_hide'])) {
 		exit (0);
 	} else {
 		$_SESSION['Message'] = $valid;
-		require(ROOT . '/view/recovery.php');
+		require(ROOT . '/view/recovery.html');
 	}
 } else if ($user->user_check_link($args) !== FALSE) {
-	require(ROOT . '/view/recovery.php');
+	require(ROOT . '/view/recovery.html');
 } else {
 	$_SESSION['Message'] = '<div class="error">Wrong recovery link!<br/>Nice try, little hacker ;)</div><hr/>';
 	header('Location: http://localhost:8080/login');

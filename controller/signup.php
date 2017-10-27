@@ -12,5 +12,5 @@ if (isset($_POST['sign_up'])) {
 		$_SESSION['Message'] = $valid;
 	}
 }
-require(ROOT . '/view/signup.php');
+require(ROOT . '/view/signup.html');
 $_SESSION['Message'] = NULL;

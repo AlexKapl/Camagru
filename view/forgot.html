@@ -1,0 +1,15 @@
+<?php require_once('header.html') ?>
+<div class="wrapper">
+	<div class="container">
+		<form class="form" action="forgot" method="POST">
+			<?= $_SESSION['Message'] ?>
+			<input type="email" name="email" required placeholder="Email">
+			<br/>
+			<button type="submit" name="forgot">Send</button>
+			<br/>
+			<button class="forgot" onclick='location.href="login"'>Back to login</button>
+			<br/>
+		</form>
+	</div>
+</div>
+<?php require_once ('footer.html')?>

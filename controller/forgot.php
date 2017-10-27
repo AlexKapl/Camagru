@@ -6,5 +6,5 @@ if (isset($_POST['forgot'])) {
 	$_SESSION['Message'] = $user->user_password_forgot($_POST['email']);
 }
 
-require(ROOT . '/view/forgot.php');
+require(ROOT . '/view/forgot.html');
 $_SESSION['Message'] = NULL;

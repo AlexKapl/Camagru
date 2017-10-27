@@ -13,8 +13,9 @@ if (!isset($_SESSION['Message']))
 $router = new Router();
 $res = $router->route();
 $controller = $res[0];
-if (isset($res[1]))
-	$args = $res[1];
+$header = $res[1];
+if (isset($res[2]))
+	$args = $res[2];
 else
 	$args = NULL;
 if (file_exists($controller)) {

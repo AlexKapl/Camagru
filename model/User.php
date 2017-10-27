@@ -30,8 +30,8 @@ class User
 		else if ($this->_check_user_email() !== FALSE)
 			return ('<div class="error">This email is already used!</div><hr/>');
 		else {
-			$password = password_hash($password, PASSWORD_DEFAULT);
-			$link = hash('whirlpool', $this->_email . time());
+			$password = password_hash(hash('whirlpool', $password), PASSWORD_DEFAULT);
+			$link = hash('whirlpool', hash('whirlpool', $this->_email . time()));
 			$this->_execute_query($this->_db_save, [$this->_login, $email, $password, $link]);
 			$mail_message = "Hi $this->_login!<br/>Looks like you registered on my Camagru project<br/>";
 			$mail_message .= "Please, confirm your registration by clicking the link below<br/>";
@@ -52,8 +52,7 @@ class User
 	}
 
 	public function check_user_activation($link) {
-		if ($this->_execute_query($this->_db_link, [$link])) {
-			$user = $this->_db_link->fetch();
+		if (($user = $this->user_check_link($link)) !== FALSE) {
 			if ($user !== FALSE) {
 				if ($user['status'] === '0') {
 					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = NULL WHERE `id` = ?");
@@ -81,7 +80,7 @@ class User
 		if (($user = $this->user_check_link($link)) !== FALSE) {
 			if (strcmp($password, $password2) === 0) {
 				$update = $this->_db->prepare("UPDATE `user` SET `password` = ?, `link` = NULL WHERE `id` = ?");
-				$password = password_hash($password, PASSWORD_DEFAULT);
+				$password = password_hash(hash('whirlpool', $password), PASSWORD_DEFAULT);
 				if ($this->_execute_query($update, [$password, $user['id']])) {
 					return (TRUE);
 				} else {
@@ -97,7 +96,7 @@ class User
 	public function user_password_forgot($email) {
 		$this->_email = $email;
 		if (($user = $this->_check_user_email()) !== FALSE) {
-			$link = hash('whirlpool', $this->_email . time());
+			$link = hash('whirlpool', hash('whirlpool', $this->_email . time()));
 			$update = $this->_db->prepare("UPDATE `user` SET `link` = ? WHERE `id` = ?");
 			if ($this->_execute_query($update, [$link, $user['id']])) {
 				$mail_message = "Hi $this->_login!<br/>Someone requested password recovery on my Camagru project.<br/>";

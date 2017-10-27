@@ -16,5 +16,5 @@ if (isset($_POST['do_login'])) {
 		$_SESSION['Message'] = $valid;
 	}
 }
-require(ROOT . '/view/login.php');
+require(ROOT . '/view/login.html');
 $_SESSION['Message'] = NULL;

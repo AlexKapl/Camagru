@@ -1,12 +1,12 @@
 <?php
 
 return array(
-	'login' => 'login',
-	'logout' => 'logout',
-	'forgot' => 'forgot',
-	'recovery' => 'recovery',
-	'signup'=>'signup',
-	'camagru'=>'camagru',
-	'recovery/(\w+)' => 'recovery/$1',
-	'activate/(\w+)'=>'activation/$1'
+	'login' => 'login/Login',
+	'logout' => 'logout/Logout',
+	'forgot' => 'forgot/Forgot Password',
+	'recovery' => 'recovery/Password Recovery',
+	'signup' => 'signup/Sign up',
+	'camagru' => 'camagru/Camagru',
+	'recovery/(\w+)' => 'recovery/Password Recovery/$1',
+	'activate/(\w+)' => 'activation/Activation/$1'
 );
