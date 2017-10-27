@@ -1,3 +1,3 @@
 <?php
-require (ROOT . '/view/camagru.php');
+require(ROOT . '/view/camagru.html');
 $_SESSION['Message'] = NULL;

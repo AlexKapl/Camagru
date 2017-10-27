@@ -21,7 +21,7 @@ form.form input:last-of-type {
 	margin-bottom: 30px;
 }
 
-form.form button {
+form.form button, #snap {
 	border-radius: 10px;
 	background: rgba(22, 22, 22, 0.7);
 	box-shadow: 0 10px 10px black;

@@ -157,7 +157,7 @@ class User
 	}
 
 	private function _check_user_password($user, $password) {
-		if (password_verify($password, $user['password'])) {
+		if (password_verify(hash('whirlpool', $password), $user['password'])) {
 			if ($user['status'] === '1') {
 				$this->_email = $user['email'];
 				return (TRUE);

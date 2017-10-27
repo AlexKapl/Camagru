@@ -1,0 +1,17 @@
+.video {
+	margin: 0 auto;
+	border: solid 1px black;
+	width: 100%;
+	max-width: 960px;
+	text-align: center;
+	padding: 0 15px;
+}
+
+.canvas {
+	margin: 0 auto;
+	border: solid 1px black;
+	width: 100%;
+	max-width: 960px;
+	text-align: center;
+	padding: 0 15px;
+}
