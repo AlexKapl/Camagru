@@ -9,9 +9,9 @@ class Router
 	}
 
 	/*
-	 *	Returns requested uri from server
-	 *	or FALSE if invalid request
-	 */
+	*	Returns requested uri from server
+	*	or FALSE if invalid request
+	*/
 	private function _getURI() {
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$uri = $_SERVER['REQUEST_URI'];

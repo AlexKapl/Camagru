@@ -149,10 +149,10 @@ class User
 	}
 
 	private function _check_user_email() {
-		if ($this->_execute_query($this->_db_email,
-			isset($this->_email) ? [$this->_email] : [$this->_login])) {
+		$param = isset($this->_email) ? [$this->_email] : [$this->_login];
+		if ($this->_execute_query($this->_db_email, $param))
 			return ($this->_db_email->fetch());
-		} else
+		else
 			return (FALSE);
 	}
 
@@ -161,10 +161,12 @@ class User
 			if ($user['status'] === '1') {
 				$this->_email = $user['email'];
 				return (TRUE);
-			} else
+			} else {
 				return ('<div class="error">Please, confirm your registration!</div><hr/>');
-		} else
+			}
+		} else {
 			return ('<div class="error">Wrong password!</div><hr/>');
+		}
 	}
 
 	public function setEmail($email) {

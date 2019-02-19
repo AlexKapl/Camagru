@@ -20,6 +20,10 @@
 *.so.*
 *.dylib
 
+# Sublime
+/*sublime*
+!*sublime-project
+
 # Executables
 *.exe
 *.out
