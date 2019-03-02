@@ -5,7 +5,7 @@ class User
 	private $_login;
 	private $_email;
 	private $_db;
-	private $_db_save;
+	private $_db_new_user;
 	private $_db_login;
 	private $_db_email;
 	private $_db_link;
@@ -14,8 +14,7 @@ class User
 		if (isset($login))
 			$this->_login = $login;
 		$this->_db = $db;
-		$this->_db_save = $db->prepare("INSERT INTO `user` (`login`, `email`, `password`, `link`)
-										VALUES(?, ?, ?, ?)");
+		$this->_db_new_user = $db->prepare("INSERT INTO `user` (`login`, `email`, `password`, `link`) VALUES(?, ?, ?, ?)");
 		$this->_db_login = $db->prepare("SELECT * FROM `user` WHERE `login` = ?");
 		$this->_db_email = $db->prepare("SELECT * FROM `user` WHERE `email` = ?");
 		$this->_db_link = $db->prepare("SELECT * FROM `user` WHERE `link` = ?");
@@ -32,7 +31,7 @@ class User
 		else {
 			$password = password_hash(hash('whirlpool', $password), PASSWORD_DEFAULT);
 			$link = hash('whirlpool', hash('whirlpool', $this->_email . time()));
-			$this->_execute_query($this->_db_save, [$this->_login, $email, $password, $link]);
+			$this->_execute_query($this->_db_new_user, [$this->_login, $email, $password, $link]);
 			$mail_message = "Hi $this->_login!<br/>Looks like you registered on my Camagru project<br/>";
 			$mail_message .= "Please, confirm your registration by clicking the link below<br/>";
 			$mail_message .= "http://localhost:8080" . "/activate/" . $link . "\r\n";
@@ -122,13 +121,13 @@ class User
 			"input-charset" => $encoding,
 			"output-charset" => $encoding,
 			"line-length" => 76,
-			"line-break-chars" => "\r\n"
+			"line-break-chars" => "\n"
 		);
-		$header = "Content-type: text/html; charset=" . $encoding . " \r\n";
-		$header .= "From: " . $from_name . " <" . $from_mail . "> \r\n";
-		$header .= "MIME-Version: 1.0 \r\n";
-		$header .= "Content-Transfer-Encoding: 8bit \r\n";
-		$header .= "Date: " . date("r (T)") . " \r\n";
+		$header = "Content-type: text/html; charset=" . $encoding . " \n";
+		$header .= "From: " . $from_name . " <" . $from_mail . "> \n";
+		$header .= "MIME-Version: 1.0 \n";
+		$header .= "Content-Transfer-Encoding: 8bit \n";
+		$header .= "Date: " . date("r (T)") . " \n";
 		$header .= iconv_mime_encode("Subject", $mail_subject, $subject_preferences);
 
 		mail($mail_to, $mail_subject, $mail_message, $header);
@@ -167,10 +166,6 @@ class User
 		} else {
 			return ('<div class="error">Wrong password!</div><hr/>');
 		}
-	}
-
-	public function setEmail($email) {
-		$this->_email = $email;
 	}
 
 	public function __destruct() {

@@ -1,5 +1,5 @@
 <?php
-$_SESSION['Message'] = '<div class="msg">Good bye, ' . $_SESSION['login'] . '!</div><hr/>';
+setMessage("Good bye, $_SESSION['login']!");
 unset($_SESSION['login']);
 header('Location: login');
 exit (0);

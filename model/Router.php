@@ -8,29 +8,28 @@ class Router
 		$this->_routes = include(ROOT . '/config/routes.php');
 	}
 
-	/*
-	*	Returns requested uri from server
-	*	or FALSE if invalid request
-	*/
 	private function _getURI() {
 		if (!empty($_SERVER['REQUEST_URI'])) {
-			$uri = $_SERVER['REQUEST_URI'];
-			if ($uri === '/')
-				$uri = 'login';
-			else
-				$uri = trim($uri, '/');
-			return $uri;
+			$uri = trim($_SERVER['REQUEST_URI'], '/');
+			return ($uri ? $uri : 'camagru');
 		} else
 			return (FALSE);
 	}
 
 	public function route() {
 		$uri = $this->_getURI();
-		foreach ($this->_routes as $uri_route => $path) {
-			if (preg_match("~$uri_route~", $uri)) {
-				$res = explode('/', preg_replace("~$uri_route~", $path, $uri));
-				$res[0] = ROOT . "/controller/" . $res[0] . ".php";
-				return ($res);
+		if ($uri) {
+			echo $uri, '<hr/>';
+			foreach ($this->_routes as $route) {
+				$regexp = "~camagru/($route)(.*)~";
+				echo $regexp, '<hr/>';
+				if (preg_match($regexp, $uri)) {
+					$lal = preg_replace($regexp, "$0:$1:$2", $uri);
+					echo $lal, '<hr/>';
+					$path = explode(':', $lal);
+					// $path[0] = ROOT . "/controller/" . $path[0] . ".php";
+					return ($path);
+				}
 			}
 		}
 		return NULL;
