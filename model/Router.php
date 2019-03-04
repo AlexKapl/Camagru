@@ -1,5 +1,9 @@
 <?php
 
+function println($msg) {
+	echo $msg, "<hr/>";
+}
+
 class Router
 {
 	private $_routes;
@@ -8,26 +12,38 @@ class Router
 		$this->_routes = include(ROOT . '/config/routes.php');
 	}
 
-	private function _getURI() {
-		if (!empty($_SERVER['REQUEST_URI'])) {
-			$uri = trim($_SERVER['REQUEST_URI'], '/');
-			return ($uri ? $uri : 'camagru');
-		} else
-			return (FALSE);
+	// Messages controlling
+	private function setSessionMessage($type, $msg) {
+		$_SESSION['Message'] = "<div class=\"$type\">$msg</div><hr/>";
 	}
 
-	public function route() {
+	public function setMessage($msg) {
+		if (!empty($msg))
+			setSessionMessage("msg", $msg);
+	}
+
+	public function setError($msg) {
+		if (!empty($msg))
+			setSessionMessage("error", $msg);
+	}
+
+	// Routes tracing
+	private function _getURI() {
+		if (!empty($_SERVER['REQUEST_URI'])) {
+			$uri = str_replace('/camagru/', '', $_SERVER['REQUEST_URI']);
+			return ($uri ? $uri : 'camagru');
+		} else {
+			return (FALSE);
+		}
+	}
+
+	private function match_route() {
 		$uri = $this->_getURI();
 		if ($uri) {
-			echo $uri, '<hr/>';
 			foreach ($this->_routes as $route) {
-				$regexp = "~camagru/($route)(.*)~";
-				echo $regexp, '<hr/>';
+				$regexp = "~($route)(.*)~";
 				if (preg_match($regexp, $uri)) {
-					$lal = preg_replace($regexp, "$0:$1:$2", $uri);
-					echo $lal, '<hr/>';
-					$path = explode(':', $lal);
-					// $path[0] = ROOT . "/controller/" . $path[0] . ".php";
+					$path = explode(':', preg_replace($regexp, "$1:$2", $uri));
 					return ($path);
 				}
 			}
@@ -35,7 +51,22 @@ class Router
 		return NULL;
 	}
 
-	public function __destruct() {
-		// TODO: Implement __destruct() method.
+	public function route($value='') {
+		$result = $this->match_route();
+		if ($result !== NULL) {
+			$class = ucfirst($result[0]) . "Controller";
+			$_path = ROOT . "/controller/$class.php";
+			$args = $result[1];
+
+			if (file_exists($_path)) {
+				require_once ($_path);
+				$controller = new $class($args);
+				$controller->handleRequest();
+			} else {
+				require_once ('404.html');
+			}
+		} else {
+			require_once ('404.html');
+		}
 	}
 }

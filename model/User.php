@@ -4,16 +4,14 @@ class User
 {
 	private $_login;
 	private $_email;
-	private $_db;
 	private $_db_new_user;
 	private $_db_login;
 	private $_db_email;
 	private $_db_link;
 
-	public function __construct($login, $db) {
+	public function __construct($login) {
 		if (isset($login))
 			$this->_login = $login;
-		$this->_db = $db;
 		$this->_db_new_user = $db->prepare("INSERT INTO `user` (`login`, `email`, `password`, `link`) VALUES(?, ?, ?, ?)");
 		$this->_db_login = $db->prepare("SELECT * FROM `user` WHERE `login` = ?");
 		$this->_db_email = $db->prepare("SELECT * FROM `user` WHERE `email` = ?");
@@ -54,7 +52,7 @@ class User
 		if (($user = $this->user_check_link($link)) !== FALSE) {
 			if ($user !== FALSE) {
 				if ($user['status'] === '0') {
-					$update = $this->_db->prepare("UPDATE `user` SET `status` = '1', `link` = NULL WHERE `id` = ?");
+					$update = $db->prepare("UPDATE `user` SET `status` = '1', `link` = NULL WHERE `id` = ?");
 					if ($this->_execute_query($update, [$user['id']])) {
 						return ('<div class="msg">You successfully confirmed your registration!</div><hr/>');
 					}
@@ -78,7 +76,7 @@ class User
 	public function user_password_recovery($password, $password2, $link) {
 		if (($user = $this->user_check_link($link)) !== FALSE) {
 			if (strcmp($password, $password2) === 0) {
-				$update = $this->_db->prepare("UPDATE `user` SET `password` = ?, `link` = NULL WHERE `id` = ?");
+				$update = $db->prepare("UPDATE `user` SET `password` = ?, `link` = NULL WHERE `id` = ?");
 				$password = password_hash(hash('whirlpool', $password), PASSWORD_DEFAULT);
 				if ($this->_execute_query($update, [$password, $user['id']])) {
 					return (TRUE);
@@ -96,7 +94,7 @@ class User
 		$this->_email = $email;
 		if (($user = $this->_check_user_email()) !== FALSE) {
 			$link = hash('whirlpool', hash('whirlpool', $this->_email . time()));
-			$update = $this->_db->prepare("UPDATE `user` SET `link` = ? WHERE `id` = ?");
+			$update = $db->prepare("UPDATE `user` SET `link` = ? WHERE `id` = ?");
 			if ($this->_execute_query($update, [$link, $user['id']])) {
 				$mail_message = "Hi $this->_login!<br/>Someone requested password recovery on my Camagru project.<br/>";
 				$mail_message .= "If it was not you, just ignore this message.<br/>";

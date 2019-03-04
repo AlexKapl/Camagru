@@ -1,11 +1,22 @@
-<?php require_once('header.html') ?>
-<?= $_SESSION['Message'] ?>
+<?php
+
+class CamagruView extends BaseView
+{
+
+	function __construct()
+	{
+		parent::__construct("Camagru");
+	}
+
+	protected function makeBody()
+	{
+		$this->body = <<< EOT
 <div class="wrapper">
 	<div class="container">
 		<div class="post_list">
 			<article id="post-1" class="post">
-				<div class="post-image"><a href=""><img class="max"
-														src="https://html5book.ru/wp-content/uploads/2016/05/rasskaz_slovar_rodnoy_prirodi.jpg"></a>
+				<div class="post-image"><a href="">
+					<img class="max"src="https://html5book.ru/wp-content/uploads/2016/05/rasskaz_slovar_rodnoy_prirodi.jpg"></a>
 				</div>
 				<div class="post-content">
 					WTF IS THIS??<br/>
@@ -22,4 +33,6 @@
 		</div>
 	</div>
 </div>
-<?php require_once('footer.html') ?>
+EOT;
+	}
+}
