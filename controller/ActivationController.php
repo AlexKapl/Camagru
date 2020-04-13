@@ -1,5 +1,20 @@
 <?php
-require_once(ROOT . '/model/User.php');
-$user = new User(NULL, $db);
-$_SESSION['Message'] = $user->check_user_activation($args);
-header('Location: http://localhost/camagru/login');
+
+class ActivationController extends BaseController
+{
+	private $user;
+	private $link;
+
+	function __construct($args, $db)
+	{
+		require_once(ROOT . '/model/User.php');
+		$this->user = new User($db);
+		$this->link = $args[0];
+	}
+
+	public function handleRequest()
+	{
+		$this->user->user_activation($this->link);
+		header('Location: '.BASE.'/login');
+	}
+}

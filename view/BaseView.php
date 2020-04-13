@@ -11,6 +11,9 @@ abstract class BaseView
 	protected $body = "";
 	protected $footer = "";
 
+	protected $pattern = "(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*";
+
+
 	abstract protected function makeBody();
 
 	public function __construct($title)
@@ -19,6 +22,7 @@ abstract class BaseView
 		$this->styles = ["style", "forms"];
 	}
 
+	// Page rendering
 	public function createView()
 	{
 		$this->makeHeader();
@@ -28,25 +32,12 @@ abstract class BaseView
 		$view = $this->header;
 		if (isset($_SESSION['Message'])) {
 			$view .= $_SESSION['Message'];
+			unset($_SESSION['Message']);
 		}
 		$view .= $this->body . $this->footer;
-		unset($_SESSION['Message']);
 
 		return ($view);
 	}
-
-// 	$profile = BASE . '/profile';
-// $logout = BASE . '/logout';
-// $logout_logo = BASE . '/images/logout-24.gif';
-// 			<div class="nav-toggle"><span></span></div>
-// 			<ul id="menu">
-// 				<li>
-// 					<a href="$profile">User Profile</a>
-// 				</li>
-// 				<li>
-// 					<a href="$logout"><img src="$logout_logo"></a>
-// 				</li>
-// 			</ul>
 
 	protected function makeHeader()
 	{
@@ -58,7 +49,7 @@ abstract class BaseView
 		}
 		$scripts = "";
 		foreach ($this->scripts as $script) {
-			$link = BASE . "/styles/$script";
+			$link = BASE . "/scripts/$script";
 			$scripts .= "\t<script src=\"$link.js\"></script>\n";
 		}
 		$this->header = <<< EOT

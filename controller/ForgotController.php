@@ -1,10 +1,20 @@
 <?php
 
-if (isset($_POST['forgot'])) {
-	require_once(ROOT . '/model/User.php');
-	$user = new User(NULL, $db);
-	$_SESSION['Message'] = $user->user_password_forgot($_POST['email']);
-}
+class ForgotController extends BaseController
+{
 
-require(ROOT . '/view/forgot.html');
-$_SESSION['Message'] = NULL;
+	function __construct($args, $db)
+	{
+		parent::__construct($this, $db);
+	}
+
+	public function handleRequest()
+	{
+		if (isset($_POST['forgot'])) {
+			$user = new User($this->db);
+			$user->user_password_forgot($_POST['email']);
+		}
+
+		echo $this->view->createView();
+	}
+}

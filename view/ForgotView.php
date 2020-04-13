@@ -1,8 +1,20 @@
-<?php require_once('header.html') ?>
+<?php
+
+class LoginView extends BaseView
+{
+	private $pattern = "(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*";
+
+	function __construct()
+	{
+		parent::__construct("Camagru: Forgot Password");
+	}
+
+	protected function makeBody()
+	{
+		$this->body = <<< EOT
 <div class="wrapper">
 	<div class="container">
 		<form class="form" action="forgot" method="POST">
-			<?= $_SESSION['Message'] ?>
 			<input type="email" name="email" required placeholder="Email">
 			<br/>
 			<button type="submit" name="forgot">Send</button>
@@ -12,4 +24,6 @@
 		</form>
 	</div>
 </div>
-<?php require_once ('footer.html')?>
+EOT;
+	}
+}
